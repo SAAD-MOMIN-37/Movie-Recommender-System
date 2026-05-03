@@ -240,7 +240,7 @@ movies-recommendation-system/
 **Momin Saad Asrar**  
 B.E. CSE (AI-ML) — Anjuman-I-Islam's Kalsekar Technical Campus  
 📧 saadizhan123@gmail.com  
-🔗 [LinkedIn](https://linkedin.com/in/YOUR_LINKEDIN)
+🔗 [LinkedIn](https://www.linkedin.com/in/saad-momin-9a88542bb)
 
 ---
 
