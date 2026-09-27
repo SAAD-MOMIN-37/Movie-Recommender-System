@@ -1,247 +1,548 @@
-# 🎬 Movies Recommendation System
+# 🎬 Movie Recommendation System
 
 ![Python](https://img.shields.io/badge/Python-3.8+-blue?style=for-the-badge&logo=python)
+![Flask](https://img.shields.io/badge/Flask-Web%20Framework-black?style=for-the-badge&logo=flask)
 ![Scikit-learn](https://img.shields.io/badge/Scikit--learn-TF--IDF-orange?style=for-the-badge&logo=scikit-learn)
 ![NLP](https://img.shields.io/badge/NLP-Cosine%20Similarity-blueviolet?style=for-the-badge)
+![OMDb](https://img.shields.io/badge/OMDb-API-yellow?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Complete-green?style=for-the-badge)
 
-A content-based movie recommendation system that suggests similar movies based on genres, keywords, cast, director, and overview using **TF-IDF Vectorization** and **Cosine Similarity**. Built on the TMDB 5000 Movies Dataset.
+A **content-based movie recommendation system** that recommends similar movies based on genres, keywords, cast, director, and movie overview.
+
+The recommendation engine uses **TF-IDF Vectorization** and **Cosine Similarity**, while a **Flask web application** provides an interactive interface with movie posters and IMDb ratings fetched through the OMDb API.
 
 ---
 
 ## 📌 Table of Contents
+
 - [About the Project](#about-the-project)
-- [Dataset](#dataset)
+- [Features](#features)
 - [How It Works](#how-it-works)
+- [Dataset](#dataset)
 - [Project Workflow](#project-workflow)
-- [How to Run](#how-to-run)
+- [Web Application](#web-application)
 - [Project Structure](#project-structure)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [Running the Application](#running-the-application)
 - [Tech Stack](#tech-stack)
+- [Key Concepts](#key-concepts)
+- [Future Improvements](#future-improvements)
+- [Author](#author)
 
 ---
 
-## 🔍 About the Project
+<a id="about-the-project"></a>
+# 🔍 About the Project
 
-Ever wondered how Netflix or YouTube suggests "similar" content? This project builds exactly that — a **content-based filtering** recommendation system for movies.
+This project implements a **content-based movie recommendation system** that recommends movies similar to a movie selected by the user.
 
-Given a movie title, the system finds the **top 10 most similar movies** by analyzing:
+Instead of relying on user ratings or collaborative filtering, the system analyzes the **content and metadata of movies**.
+
+The following information is combined into a single feature representation:
+
 - 🎭 Genres
 - 🔑 Keywords
-- 🎬 Director
 - 🌟 Top 3 Cast Members
-- 📝 Plot Overview
+- 🎬 Director
+- 📝 Movie Overview
 
-Key highlights:
-- **TMDB 5000** movies in the database
-- **TF-IDF Vectorizer** with 5000 features
-- **Cosine Similarity** matrix for fast lookups
-- Search, browse, batch recommend — full interactive system
-- Model saved with **Pickle** for instant reuse
+The processed movie information is transformed into numerical vectors using **TF-IDF**, and **Cosine Similarity** is used to identify movies with similar content.
+
+The recommendation artifacts are precomputed during model development and serialized using Pickle for efficient reuse in the Flask application.
 
 ---
 
-## 📊 Dataset
+<a id="features"></a>
+# ✨ Features
 
-**TMDB 5000 Movies Dataset**
+## 🤖 Recommendation Engine
 
-| File | Details |
-|---|---|
-| `tmdb_5000_movies.csv` | Movie info — title, overview, genres, keywords |
-| `tmdb_5000_credits.csv` | Cast and crew information |
+- Content-based movie recommendation
+- TF-IDF based feature representation
+- Cosine similarity for movie matching
+- Top **5 similar movies** generated for each query
+- Precomputed similarity matrix for faster recommendations
 
-| Feature | Details |
-|---|---|
-| Total Movies | ~4800 (after cleaning) |
-| Key Columns Used | title, overview, genres, keywords, cast, crew |
-| Target | Find top 10 similar movies |
+## 🌐 Web Application
 
----
+- Flask backend
+- Jinja2 templating
+- Responsive HTML/CSS frontend
+- Minimal dark glassmorphism interface
+- Movie selection dropdown
+- One-click recommendation generation
+- Responsive movie card layout
 
-## 🧠 How It Works
+## 🎬 Movie Information
 
-### Step 1 — Feature Extraction
-All relevant info is combined into one **"tags"** column:
+- Movie posters fetched from the **OMDb API**
+- IMDb ratings displayed for recommended movies
+- Local fallback poster when movie artwork is unavailable
 
-```
-tags = overview + genres + keywords + top 3 cast + director
-```
+## ⚡ Performance
 
-Example for **Avatar**:
-```
-tags = "a paraplegic marine dispatched to the moon pandora... 
-        action adventure fantasy sciencefiction 
-        cultureclash future space war 
-        SamWorthington ZoeSaldana SigourneyWeaver 
-        JamesCameron"
-```
-
-### Step 2 — TF-IDF Vectorization
-Each movie's tags are converted into a **numeric vector** of 5000 features.
-
-> **TF-IDF** (Term Frequency-Inverse Document Frequency) gives higher weight to words that are unique to a movie and lower weight to common words like "the", "a", "is".
-
-### Step 3 — Cosine Similarity
-The **similarity score** between every pair of movies is calculated.
-
-```
-Similarity Score = cos(angle between two vectors)
-Score = 1.0  →  Identical movies
-Score = 0.0  →  Completely different movies
-```
-
-### Step 4 — Recommendation
-For a given movie, find the **top 10 movies** with the highest similarity scores.
+- Precomputed similarity matrix
+- Serialized recommendation data
+- OMDb API responses cached during application runtime
+- No model training required when running the Flask application
 
 ---
 
-## 🔄 Project Workflow
+<a id="how-it-works"></a>
+# 🧠 How It Works
 
+## Step 1 — Feature Extraction
+
+Relevant movie information is combined into a single `tags` feature.
+
+```text
+tags =
+overview
++ genres
++ keywords
++ top 3 cast
++ director
 ```
-1. Data Loading
-   - tmdb_5000_movies.csv + tmdb_5000_credits.csv
-   - Merge on 'title'
-        ↓
-2. Feature Selection
-   - Keep: movie_id, title, overview, genres, keywords, cast, crew
-        ↓
-3. Data Preprocessing
-   - Parse JSON columns using ast.literal_eval()
-   - Extract top 3 cast members
-   - Extract director from crew
-   - Remove spaces (e.g. "Sam Worthington" → "SamWorthington")
-        ↓
-4. Tag Creation
-   - tags = overview + genres + keywords + cast + director
-        ↓
-5. TF-IDF Vectorization
-   - max_features = 5000
-   - stop_words = 'english'
-        ↓
-6. Cosine Similarity Matrix
-   - Shape: (4800, 4800)
-        ↓
-7. Recommendation Function
-   - Input: movie title
-   - Output: top 10 similar movies
-        ↓
-8. Save Models
-   - movies.pkl (dataframe)
-   - similarity.pkl (similarity matrix)
+
+For example:
+
+```text
+Avatar
+
+overview:
+A paraplegic marine dispatched to the moon Pandora...
+
+genres:
+Action Adventure Fantasy Science Fiction
+
+keywords:
+culture clash, future, space war
+
+cast:
+Sam Worthington Zoe Saldana Sigourney Weaver
+
+director:
+James Cameron
 ```
 
 ---
 
-## 🎯 Example Output
+## Step 2 — Text Preprocessing
+
+The original TMDB dataset contains several columns stored as JSON-like strings.
+
+These columns are parsed and transformed into usable Python structures.
+
+The preprocessing pipeline extracts:
+
+* Movie genres
+* Relevant keywords
+* Top 3 cast members
+* Director
+
+Names are normalized by removing spaces to improve matching during vectorization.
+
+```text
+Sam Worthington
+        ↓
+SamWorthington
+```
+
+---
+
+## Step 3 — TF-IDF Vectorization
+
+The combined `tags` feature is converted into numerical vectors using **TF-IDF (Term Frequency-Inverse Document Frequency)**.
+
+TF-IDF assigns greater importance to terms that are more distinctive while reducing the importance of common words.
+
+The vectorizer used during model development:
 
 ```python
-recommend('Avatar')
+TfidfVectorizer(
+    max_features=5000,
+    stop_words="english"
+)
+```
 
-# Output:
-Top 10 recommendations for 'Avatar':
-1. Guardians of the Galaxy
-2. Aliens
-3. Star Wars: Clone Wars
-4. Star Trek Into Darkness
-5. Star Trek Beyond
-6. Alien: Resurrection
-7. Alien
-8. Lockout
-9. Jason X
-10. The Martian
+The resulting vectors represent each movie as a numerical feature vector.
+
+---
+
+## Step 4 — Cosine Similarity
+
+After vectorization, **Cosine Similarity** is used to measure the similarity between movies.
+
+```text
+Similarity Score → 1.0
+        ↓
+Highly Similar
+
+Similarity Score → 0.0
+        ↓
+Less Similar
+```
+
+The similarity scores are stored in a precomputed similarity matrix.
+
+For approximately 4,800 movies:
+
+```text
+Similarity Matrix
+≈ 4800 × 4800
+```
+
+This allows the Flask application to retrieve recommendations without recalculating similarity for every request.
+
+---
+
+## Step 5 — Generate Recommendations
+
+When a user selects a movie, the application:
+
+```text
+Selected Movie
+      ↓
+Find Movie Index
+      ↓
+Retrieve Similarity Scores
+      ↓
+Sort Movies by Similarity
+      ↓
+Remove Selected Movie
+      ↓
+Select Top 5 Movies
+      ↓
+Fetch Poster + IMDb Rating
+      ↓
+Display Recommendations
+```
+
+Each recommendation displays:
+
+* 🎬 Movie title
+* 🖼️ Movie poster
+* ⭐ IMDb rating
+
+---
+
+<a id="dataset"></a>
+# 📊 Dataset
+
+This project uses the **TMDB 5000 Movies Dataset**.
+
+## Dataset Files
+
+| File                    | Description                                                      |
+| ----------------------- | ---------------------------------------------------------------- |
+| `tmdb_5000_movies.csv`  | Movie information including title, overview, genres and keywords |
+| `tmdb_5000_credits.csv` | Cast and crew information                                        |
+
+## Dataset Overview
+
+| Feature             | Details                                    |
+| -------------------- | -------------------------------------------- |
+| Dataset              | TMDB 5000 Movies Dataset                     |
+| Movies               | ~4,800 after preprocessing                   |
+| Main Features        | Overview, genres, keywords, cast, director   |
+| Recommendation Type  | Content-Based Filtering                      |
+| Recommendations      | Top 5 similar movies                         |
+
+---
+
+<a id="project-workflow"></a>
+# 🔄 Project Workflow
+
+```text
+TMDB Movies Dataset
+        +
+TMDB Credits Dataset
+        ↓
+    Data Merging
+        ↓
+ Feature Selection
+        ↓
+ Data Preprocessing
+        ↓
+ ┌──────────────────────┐
+ │ Extract Genres       │
+ │ Extract Keywords     │
+ │ Extract Top 3 Cast   │
+ │ Extract Director     │
+ └──────────────────────┘
+        ↓
+    Tag Creation
+        ↓
+ TF-IDF Vectorization
+        ↓
+ Cosine Similarity
+        ↓
+ Save Processed Data
+        ↓
+ ┌──────────────────────┐
+ │    Flask Backend     │
+ └──────────────────────┘
+        ↓
+ User Selects Movie
+        ↓
+ Generate Top 5 Movies
+        ↓
+ ┌──────────────────────┐
+ │       OMDb API       │
+ │ Posters + IMDb Rate  │
+ └──────────────────────┘
+        ↓
+    Web Interface
 ```
 
 ---
 
-## 🚀 How to Run
+<a id="web-application"></a>
+# 🌐 Web Application
 
-### 1. Clone the Repository
+The recommendation engine is integrated into a Flask-based web application.
+
+The frontend uses a **minimal dark glassmorphism design** with a cinematic visual style.
+
+## User Flow
+
+```text
+Select a Movie
+      ↓
+Click "Recommend"
+      ↓
+Recommendation Engine
+      ↓
+Top 5 Similar Movies
+      ↓
+Posters + IMDb Ratings
+```
+
+## Interface Features
+
+* 🎬 Movie selection dropdown
+* 🔍 Recommendation button
+* 🖼️ Movie poster cards
+* ⭐ IMDb ratings
+* 🌑 Dark cinematic UI
+* 🪟 Glassmorphism cards
+* ✨ Reflective/shader-style ambient background
+* 📱 Responsive layout
+
+---
+
+<a id="project-structure"></a>
+# 📁 Project Structure
+
+```text
+movies-recommendation-system/
+│
+├── app.py
+├── movie_dict.pkl
+├── similarity.pkl
+├── requirements.txt
+├── README.md
+├── .gitignore
+│
+├── templates/
+│   └── index.html
+│
+└── static/
+    ├── style.css
+    └── poster-placeholder.svg
+```
+
+## File Description
+
+| File                             | Purpose                                    |
+| --------------------------------- | -------------------------------------------- |
+| `app.py`                          | Flask application and recommendation logic  |
+| `movie_dict.pkl`                  | Processed movie data                         |
+| `similarity.pkl`                  | Precomputed cosine similarity matrix         |
+| `templates/index.html`            | Jinja2 frontend template                     |
+| `static/style.css`                | UI styling and responsive design             |
+| `static/poster-placeholder.svg`   | Fallback poster                              |
+| `requirements.txt`                | Python dependencies                          |
+
+---
+
+<a id="installation"></a>
+# 🚀 Installation
+
+## 1. Clone the Repository
+
 ```bash
 git clone https://github.com/YOUR_USERNAME/movies-recommendation-system.git
+
 cd movies-recommendation-system
 ```
 
-### 2. Install Dependencies
+---
+
+## 2. Create a Virtual Environment
+
+### Windows
+
 ```bash
-pip install numpy pandas scikit-learn pickle5
+python -m venv venv
+
+venv\Scripts\activate
 ```
 
-### 3. Run Training Notebook
+### macOS / Linux
+
 ```bash
-jupyter notebook PRJ_Movies_Recommendation_System_Training.ipynb
+python3 -m venv venv
+
+source venv/bin/activate
 ```
 
-### 4. Run Testing / Recommendations
+---
+
+## 3. Install Dependencies
+
 ```bash
-jupyter notebook PRJ_Movies_Recommendation_System_Testing.ipynb
+pip install -r requirements.txt
 ```
 
-### 5. Get Recommendations (Inside Testing Notebook)
-```python
-# Get top 10 recommendations
-recommend('The Dark Knight')
+Main dependencies include:
 
-# Search movies by keyword
-search_movies('Batman')
-
-# Batch recommendations for multiple movies
-batch_recommend(['Inception', 'Titanic', 'Avatar'])
+```text
+Flask
+Pandas
+Requests
+Scikit-learn
 ```
 
 ---
 
-## 📁 Project Structure
+<a id="configuration"></a>
+# 🔐 Configuration
 
-```
-movies-recommendation-system/
-│
-├── tmdb_5000_movies.csv                          # Movies dataset
-├── tmdb_5000_credits.csv                         # Credits dataset
-│
-├── PRJ_Movies_Recommendation_System_Training.ipynb  # Training notebook
-├── PRJ_Movies_Recommendation_System_Testing.ipynb   # Testing notebook
-│
-├── models/
-│   ├── movies.pkl                                # Processed movies dataframe
-│   └── similarity.pkl                            # Cosine similarity matrix
-│
-└── README.md
+The application uses the **OMDb API** to retrieve:
+
+* Movie posters
+* IMDb ratings
+
+Set your OMDb API key as an environment variable.
+
+### Windows PowerShell
+
+```powershell
+$env:OMDB_API_KEY="YOUR_OMDB_API_KEY"
 ```
 
----
+### Windows CMD
 
-## 🛠️ Tech Stack
+```cmd
+set OMDB_API_KEY=YOUR_OMDB_API_KEY
+```
 
-| Tool | Purpose |
-|---|---|
-| Python | Core programming language |
-| Pandas / NumPy | Data manipulation |
-| ast | Parsing JSON-like columns |
-| Scikit-learn (TF-IDF) | Text vectorization |
-| Scikit-learn (Cosine Similarity) | Similarity computation |
-| Pickle | Model serialization |
-| Jupyter Notebook | Development environment |
+### macOS / Linux
 
----
+```bash
+export OMDB_API_KEY="YOUR_OMDB_API_KEY"
+```
 
-## 💡 Key Concepts Used
-
-| Concept | Explanation |
-|---|---|
-| **Content-Based Filtering** | Recommends movies similar to the one you liked, based on movie features |
-| **TF-IDF** | Converts text to numbers — rare/unique words get higher importance |
-| **Cosine Similarity** | Measures angle between two vectors — closer to 1 means more similar |
-| **Feature Engineering** | Combined multiple columns (genres, cast, etc.) into one powerful 'tags' feature |
-| **ast.literal_eval** | Converts string representation of JSON lists into actual Python lists |
+> **Never commit your API key directly to GitHub.**
 
 ---
 
-## 👤 Author
+<a id="running-the-application"></a>
+# ▶️ Running the Application
 
-**Momin Saad Asrar**  
-B.E. CSE (AI-ML) — Anjuman-I-Islam's Kalsekar Technical Campus  
-📧 saadizhan123@gmail.com  
-🔗 [LinkedIn](https://www.linkedin.com/in/saad-momin-9a88542bb)
+Start the Flask server:
+
+```bash
+python app.py
+```
+
+Then open:
+
+```text
+http://127.0.0.1:5000
+```
+
+Select a movie from the dropdown and click:
+
+```text
+🔍 Recommend
+```
+
+The application will generate the **top 5 similar movies** and display their posters and IMDb ratings.
 
 ---
 
-> ⭐ If you found this project helpful, please give it a star!
+<a id="tech-stack"></a>
+# 🛠️ Tech Stack
+
+| Technology           | Purpose                          |
+| ---------------------- | ----------------------------------- |
+| **Python**             | Core programming language           |
+| **Pandas**             | Data manipulation                   |
+| **NumPy**              | Numerical operations                |
+| **Scikit-learn**       | TF-IDF and cosine similarity        |
+| **Flask**              | Backend web framework               |
+| **Jinja2**             | Dynamic HTML rendering              |
+| **HTML5**              | Frontend structure                   |
+| **CSS3**               | UI styling and responsive layout    |
+| **OMDb API**           | Posters and IMDb ratings            |
+| **Pickle**             | Serialization of processed data     |
+| **Jupyter Notebook**   | Model development                   |
+
+---
+
+<a id="key-concepts"></a>
+# 💡 Key Concepts
+
+| Concept                     | Explanation                                                          |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| **Content-Based Filtering**  | Recommends movies based on similarity between their content features   |
+| **TF-IDF**                   | Converts textual movie information into numerical vectors              |
+| **Cosine Similarity**        | Measures similarity between movie feature vectors                      |
+| **Feature Engineering**      | Combines multiple movie attributes into a single `tags` feature        |
+| **NLP**                      | Used to process and represent movie-related text                       |
+| **Model Serialization**      | Stores processed data and similarity results for reuse                 |
+| **Flask**                    | Serves the recommendation system through a web interface               |
+| **API Integration**          | Retrieves additional movie metadata from OMDb                          |
+
+---
+
+<a id="future-improvements"></a>
+# 🔮 Future Improvements
+
+Potential improvements include:
+
+* [ ] Movie search with autocomplete
+* [ ] Genre-based filtering
+* [ ] Display release year and movie overview
+* [ ] Movie trailer integration
+* [ ] Recommendation explanations
+* [ ] User recommendation history
+* [ ] Collaborative filtering
+* [ ] Hybrid recommendation system
+* [ ] User-specific recommendations
+* [ ] Cloud deployment
+* [ ] Improved API fallback handling
+
+---
+
+<a id="author"></a>
+# 👤 Author
+
+**Momin Saad Asrar**
+
+**B.E. CSE (AI-ML)**
+Anjuman-I-Islam's Kalsekar Technical Campus
+
+📧 **Email:** [saadizhan123@gmail.com](mailto:saadizhan123@gmail.com)
+
+🔗 **LinkedIn:**
+[https://www.linkedin.com/in/saad-momin-9a88542bb](https://www.linkedin.com/in/saad-momin-9a88542bb)
+
+---
+
+## ⭐ Support
+
+If you found this project useful, consider giving the repository a ⭐.
