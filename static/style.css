@@ -1,42 +1,42 @@
 /* =====================================================
-   Movie Recommender - Minimal Dark Glass UI
+   MOVIE RECOMMENDER
+   Minimal Cinematic Glass UI
    ===================================================== */
 
 * {
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
+    box-sizing: border-box;
 }
 
 :root {
-    --bg: #0b0d12;
-    --text: #ffffff;
-    --muted: #9ca3af;
+    --background: #080a12;
+    --surface: rgba(255, 255, 255, 0.055);
+    --surface-hover: rgba(255, 255, 255, 0.075);
 
-    --glass: rgba(255, 255, 255, 0.045);
-    --glass-hover: rgba(255, 255, 255, 0.075);
-    --border: rgba(255, 255, 255, 0.09);
-    --border-hover: rgba(255, 255, 255, 0.16);
+    --border: rgba(255, 255, 255, 0.10);
+    --border-hover: rgba(120, 130, 255, 0.30);
 
-    --red: #2E2EFF;
-    --red-hover: #2E2EFF;
+    --primary: #4f46ff;
+    --primary-hover: #5b54ff;
+
+    --text: #f5f5f7;
+    --muted: #9699a8;
+    --subtle: #696d7c;
+
+    --rating: #f6c453;
+
+    --radius: 16px;
 }
 
 
 /* =====================================================
-   Body
+   BODY
    ===================================================== */
 
 body {
     min-height: 100vh;
-
-    background:
-        radial-gradient(
-            circle at 50% -20%,
-            rgba(229, 9, 20, 0.08),
-            transparent 38%
-        ),
-        var(--bg);
+    overflow-x: hidden;
 
     color: var(--text);
 
@@ -48,65 +48,37 @@ body {
         Roboto,
         Arial,
         sans-serif;
-}
-body {
-    position: relative;
-    overflow-x: hidden;
-}
 
-body::before,
-body::after {
-    content: "";
-    position: fixed;
-    width: 480px;
-    height: 480px;
-    border-radius: 50%;
-    filter: blur(130px);
-    opacity: 0.18;
-    z-index: -1;
-    pointer-events: none;
-}
-
-body::before {
-    background: var(--red);
-    top: -120px;
-    left: -120px;
-    animation: floatBlob1 16s ease-in-out infinite;
-}
-
-body::after {
-    background: #3b82f6;
-    bottom: -150px;
-    right: -120px;
-    animation: floatBlob2 20s ease-in-out infinite;
-}
-
-@keyframes floatBlob1 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50%      { transform: translate(100px, 70px) scale(1.25); }
-}
-
-@keyframes floatBlob2 {
-    0%, 100% { transform: translate(0, 0) scale(1); }
-    50%      { transform: translate(-90px, -50px) scale(1.15); }
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(79, 70, 255, 0.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 100%,
+            rgba(124, 58, 237, 0.08),
+            transparent 30%
+        ),
+        var(--background);
 }
 
 
 /* =====================================================
-   Main Container
+   MAIN CONTAINER
    ===================================================== */
 
 .container {
-    width: min(1200px, calc(100% - 40px));
+    width: min(1180px, calc(100% - 40px));
 
     margin: 0 auto;
 
-    padding: 48px 0 60px;
+    padding: 58px 0 70px;
 }
 
 
 /* =====================================================
-   Header
+   HERO
    ===================================================== */
 
 .hero {
@@ -115,30 +87,41 @@ body::after {
     margin-bottom: 34px;
 }
 
+.hero-icon {
+    font-size: 2rem;
+
+    margin-bottom: 8px;
+
+    filter: drop-shadow(
+        0 0 18px rgba(120, 110, 255, 0.25)
+    );
+}
+
 .hero h1 {
-    font-size: 2.4rem;
-    line-height: 1.15;
+    font-size: clamp(2rem, 4vw, 2.65rem);
+
+    line-height: 1.1;
 
     font-weight: 700;
 
-    letter-spacing: -0.6px;
+    letter-spacing: -1px;
 }
 
 .hero p {
-    margin-top: 8px;
+    margin-top: 9px;
 
     color: var(--muted);
 
-    font-size: 1rem;
+    font-size: 0.98rem;
 }
 
 
 /* =====================================================
-   Search Section
+   SEARCH / SELECTOR
    ===================================================== */
 
 .search-section {
-    width: min(800px, 100%);
+    width: min(850px, 100%);
 
     margin: 0 auto;
 }
@@ -146,50 +129,75 @@ body::after {
 .recommend-form {
     display: grid;
 
-    grid-template-columns: 1fr 150px;
+    grid-template-columns: 1fr 145px;
 
-    gap: 10px;
+    gap: 12px;
 
     align-items: end;
+
+    padding: 16px;
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+
+    box-shadow:
+        0 16px 45px rgba(0, 0, 0, 0.20),
+        inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
+
+
+/* =====================================================
+   SELECT
+   ===================================================== */
 
 .select-wrapper {
     display: flex;
 
     flex-direction: column;
 
-    gap: 7px;
+    gap: 8px;
 }
 
 .select-wrapper label {
-    color: #d1d5db;
+    display: flex;
 
-    font-size: 0.86rem;
+    align-items: center;
+
+    gap: 6px;
+
+    color: #c9cbd5;
+
+    font-size: 0.82rem;
 
     font-weight: 500;
 }
 
+.select-wrapper label span {
+    font-size: 0.75rem;
+}
 
-/* Select */
 select {
     width: 100%;
 
-    height: 46px;
+    height: 48px;
 
     padding: 0 14px;
 
-    border-radius: 12px;
-
     border: 1px solid var(--border);
+
+    border-radius: 12px;
 
     outline: none;
 
-    background: rgba(255, 255, 255, 0.055);
+    background: rgba(0, 0, 0, 0.18);
 
-    color: #ffffff;
-
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    color: var(--text);
 
     font-size: 0.9rem;
 
@@ -197,31 +205,50 @@ select {
 
     transition:
         border-color 0.2s ease,
-        background 0.2s ease;
+        background 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
-select:hover,
-select:focus {
-    border-color: rgba(255, 255, 255, 0.18);
+select:hover {
+    background: rgba(255, 255, 255, 0.045);
 
-    background: rgba(255, 255, 255, 0.075);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+select:focus {
+    border-color: rgba(79, 70, 255, 0.55);
+
+    box-shadow:
+        0 0 0 3px rgba(79, 70, 255, 0.10);
 }
 
 select option {
-    background: #171a21;
+    background: #151722;
+
     color: #ffffff;
 }
 
 
-/* Recommend Button */
+/* =====================================================
+   RECOMMEND BUTTON
+   ===================================================== */
+
 .recommend-button {
-    height: 46px;
+    height: 48px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
 
     border: none;
 
     border-radius: 12px;
 
-    background: var(--red);
+    background: var(--primary);
 
     color: #ffffff;
 
@@ -231,24 +258,35 @@ select option {
 
     cursor: pointer;
 
+    box-shadow:
+        0 8px 22px rgba(79, 70, 255, 0.20);
+
     transition:
         background 0.2s ease,
-        transform 0.2s ease;
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .recommend-button:hover {
-    background: var(--red-hover);
+    background: var(--primary-hover);
 
     transform: translateY(-1px);
+
+    box-shadow:
+        0 10px 26px rgba(79, 70, 255, 0.28);
 }
 
 .recommend-button:active {
     transform: translateY(0);
 }
 
+.recommend-button span {
+    font-size: 0.8rem;
+}
+
 
 /* =====================================================
-   Recommendation Section
+   RECOMMENDATIONS
    ===================================================== */
 
 .recommendation-section {
@@ -256,20 +294,34 @@ select option {
 }
 
 .section-heading {
-    margin-bottom: 14px;
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 16px;
 }
 
 .section-heading h2 {
-    font-size: 1.2rem;
+    font-size: 1.18rem;
 
-    font-weight: 600;
+    font-weight: 650;
 
-    letter-spacing: -0.2px;
+    letter-spacing: -0.3px;
+}
+
+.section-heading p {
+    margin-top: 3px;
+
+    color: var(--subtle);
+
+    font-size: 0.76rem;
 }
 
 
 /* =====================================================
-   Movie Grid
+   MOVIE GRID
    ===================================================== */
 
 .movies-grid {
@@ -278,53 +330,57 @@ select option {
     grid-template-columns:
         repeat(5, minmax(0, 1fr));
 
-    gap: 12px;
+    gap: 14px;
 }
 
 
 /* =====================================================
-   Movie Card
+   MOVIE CARD
    ===================================================== */
 
 .movie-card {
-    position: relative;
     overflow: hidden;
 
-    background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
-    backdrop-filter: blur(16px) saturate(150%);
-    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.075),
+            rgba(255, 255, 255, 0.025)
+        );
+
+    border: 1px solid var(--border);
+
+    border-radius: 14px;
+
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
 
     box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.15),
-        0 8px 22px rgba(0,0,0,0.35);
+        0 12px 28px rgba(0, 0, 0, 0.24),
+        inset 0 1px 0 rgba(255, 255, 255, 0.045);
+
+    transition:
+        transform 0.25s ease,
+        border-color 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
 }
 
-.movie-card::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -150%;
-    width: 60%;
-    height: 100%;
+.movie-card:hover {
+    transform: translateY(-5px);
 
-    background: linear-gradient(
-        120deg,
-        transparent,
-        rgba(255,255,255,0.22),
-        transparent
-    );
-    transform: skewX(-20deg);
-    z-index: 2;
-    pointer-events: none;
+    background: var(--surface-hover);
 
-    transition: left 0.65s ease;
+    border-color: var(--border-hover);
+
+    box-shadow:
+        0 18px 38px rgba(0, 0, 0, 0.32),
+        0 0 24px rgba(79, 70, 255, 0.07);
 }
 
-.movie-card:hover::before {
-    left: 150%;
-}
+
 /* =====================================================
-   Poster
+   POSTER
    ===================================================== */
 
 .poster-wrapper {
@@ -334,9 +390,7 @@ select option {
 
     overflow: hidden;
 
-    border-radius: 8px;
-
-    background: #171a21;
+    background: #12141c;
 }
 
 .movie-poster {
@@ -347,24 +401,28 @@ select option {
 
     object-fit: cover;
 
-    transition: transform 0.25s ease;
+    transition:
+        transform 0.35s ease,
+        filter 0.35s ease;
 }
 
 .movie-card:hover .movie-poster {
-    transform: scale(1.02);
+    transform: scale(1.035);
+
+    filter: brightness(1.04);
 }
 
 
 /* =====================================================
-   Movie Info
+   MOVIE INFO
    ===================================================== */
 
 .movie-info {
-    padding: 8px 5px 5px;
+    padding: 11px 10px 12px;
 }
 
 .movie-title {
-    color: #ffffff;
+    color: var(--text);
 
     font-size: 0.86rem;
 
@@ -378,56 +436,94 @@ select option {
 
     text-overflow: ellipsis;
 
-    margin-bottom: 4px;
+    margin-bottom: 7px;
 }
 
 .movie-meta {
-    color: #9ca3af;
-    font-size: 0.74rem;
-}
+    display: flex;
 
-.star {
-    color: #fbbf24;
-}
+    align-items: center;
 
-.rating-label {
-    color: #6b7280;
-    margin-left: 3px;
-}
-
-/* =====================================================
-   Empty State
-   ===================================================== */
-
-.empty-state {
-    width: min(800px, 100%);
-
-    margin: 35px auto 0;
-
-    padding: 18px;
-
-    text-align: center;
+    gap: 6px;
 
     color: var(--muted);
 
-    background: var(--glass);
+    font-size: 0.74rem;
+}
 
-    border: 1px solid var(--border);
+.rating {
+    display: flex;
 
-    border-radius: 12px;
+    align-items: center;
+
+    gap: 4px;
+}
+
+.star {
+    color: var(--rating);
+
+    font-size: 0.72rem;
+}
+
+.rating-label {
+    color: var(--subtle);
+
+    padding-left: 5px;
+
+    border-left: 1px solid rgba(255, 255, 255, 0.10);
 }
 
 
 /* =====================================================
-   Responsive
+   EMPTY STATE
    ===================================================== */
 
-@media (max-width: 900px) {
+.empty-state {
+    width: min(850px, 100%);
+
+    margin: 34px auto 0;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 24px;
+
+    color: var(--muted);
+
+    background: var(--surface);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.empty-state span {
+    font-size: 1.4rem;
+}
+
+.empty-state p {
+    font-size: 0.85rem;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media (max-width: 950px) {
 
     .movies-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
     }
-
 }
 
 
@@ -436,15 +532,13 @@ select option {
     .container {
         width: min(100% - 24px, 520px);
 
-        padding-top: 32px;
-    }
-
-    .hero h1 {
-        font-size: 2rem;
+        padding-top: 36px;
     }
 
     .recommend-form {
         grid-template-columns: 1fr;
+
+        padding: 14px;
     }
 
     .recommend-button {
@@ -452,22 +546,29 @@ select option {
     }
 
     .movies-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
 
-        gap: 10px;
+        gap: 11px;
     }
 
+    .recommendation-section {
+        margin-top: 32px;
+    }
 }
 
 
 @media (max-width: 380px) {
 
     .hero h1 {
-        font-size: 1.75rem;
+        font-size: 1.8rem;
     }
 
     .movies-grid {
-        gap: 8px;
+        gap: 9px;
     }
 
+    .movie-info {
+        padding: 9px 8px 10px;
+    }
 }

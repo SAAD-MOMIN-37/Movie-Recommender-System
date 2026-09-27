@@ -16,18 +16,23 @@
 
         <!-- Header -->
         <header class="hero">
-            <h1>🎬 Movie Recommender</h1>
+            <div class="hero-icon">🎬</div>
+            <h1>Movie Recommender</h1>
             <p>Discover movies you'll love</p>
         </header>
 
 
-        <!-- Search / Selection -->
+        <!-- Movie Selection -->
         <section class="search-section">
 
             <form method="POST" class="recommend-form">
 
                 <div class="select-wrapper">
-                    <label for="movie">🎥 Select a movie</label>
+
+                    <label for="movie">
+                        <span>🎥</span>
+                        Select a movie
+                    </label>
 
                     <select id="movie" name="movie" required>
 
@@ -44,10 +49,12 @@
                         {% endfor %}
 
                     </select>
+
                 </div>
 
                 <button type="submit" class="recommend-button">
-                    🔍 Recommend
+                    <span>✦</span>
+                    Recommend
                 </button>
 
             </form>
@@ -61,7 +68,10 @@
         <section class="recommendation-section">
 
             <div class="section-heading">
-                <h2>Recommended Movies</h2>
+                <div>
+                    <h2>Recommended Movies</h2>
+                    <p>Based on your selected movie</p>
+                </div>
             </div>
 
             <div class="movies-grid">
@@ -88,11 +98,18 @@
                             {{ movie.title }}
                         </h3>
 
-                        <p class="movie-meta">
-                            <span class="star">★</span>
+                        <div class="movie-meta">
+
+                            <span class="rating">
+                                <span class="star">★</span>
                                 {{ movie.rating }}
-                            <span class="rating-label">IMDb</span>
-                        </p>
+                            </span>
+
+                            <span class="rating-label">
+                                IMDb
+                            </span>
+
+                        </div>
 
                     </div>
 
@@ -107,9 +124,12 @@
         {% else %}
 
             {% if selected_movie %}
+
             <div class="empty-state">
-                No recommendations found for this movie.
+                <span>🎬</span>
+                <p>No recommendations found for this movie.</p>
             </div>
+
             {% endif %}
 
         {% endif %}
