@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Movie Recommender</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <main class="container">
+
+        <!-- Header -->
+        <header class="hero">
+            <h1>🎬 Movie Recommender</h1>
+            <p>Discover movies you'll love</p>
+        </header>
+
+
+        <!-- Search / Selection -->
+        <section class="search-section">
+
+            <form method="POST" class="recommend-form">
+
+                <div class="select-wrapper">
+                    <label for="movie">🎥 Select a movie</label>
+
+                    <select id="movie" name="movie" required>
+
+                        <option value="" disabled
+                            {% if not selected_movie %}selected{% endif %}>
+                            Choose a movie...
+                        </option>
+
+                        {% for movie in movie_list %}
+                            <option value="{{ movie }}"
+                                {% if movie == selected_movie %}selected{% endif %}>
+                                {{ movie }}
+                            </option>
+                        {% endfor %}
+
+                    </select>
+                </div>
+
+                <button type="submit" class="recommend-button">
+                    🔍 Recommend
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <!-- Recommendations -->
+        {% if recommendations %}
+
+        <section class="recommendation-section">
+
+            <div class="section-heading">
+                <h2>Recommended Movies</h2>
+            </div>
+
+            <div class="movies-grid">
+
+                {% for movie in recommendations %}
+
+                <article class="movie-card">
+
+                    <div class="poster-wrapper">
+
+                        <img
+                            src="{{ movie.poster }}"
+                            alt="{{ movie.title }} poster"
+                            class="movie-poster"
+                            loading="lazy"
+                        >
+
+                    </div>
+
+                    <div class="movie-info">
+
+                        <h3 class="movie-title"
+                            title="{{ movie.title }}">
+                            {{ movie.title }}
+                        </h3>
+
+                        <p class="movie-meta">
+                            <span class="star">★</span>
+                                {{ movie.rating }}
+                            <span class="rating-label">IMDb</span>
+                        </p>
+
+                    </div>
+
+                </article>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+        {% else %}
+
+            {% if selected_movie %}
+            <div class="empty-state">
+                No recommendations found for this movie.
+            </div>
+            {% endif %}
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>

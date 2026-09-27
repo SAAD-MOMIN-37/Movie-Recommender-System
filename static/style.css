@@ -1,0 +1,473 @@
+/* =====================================================
+   Movie Recommender - Minimal Dark Glass UI
+   ===================================================== */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+:root {
+    --bg: #0b0d12;
+    --text: #ffffff;
+    --muted: #9ca3af;
+
+    --glass: rgba(255, 255, 255, 0.045);
+    --glass-hover: rgba(255, 255, 255, 0.075);
+    --border: rgba(255, 255, 255, 0.09);
+    --border-hover: rgba(255, 255, 255, 0.16);
+
+    --red: #2E2EFF;
+    --red-hover: #2E2EFF;
+}
+
+
+/* =====================================================
+   Body
+   ===================================================== */
+
+body {
+    min-height: 100vh;
+
+    background:
+        radial-gradient(
+            circle at 50% -20%,
+            rgba(229, 9, 20, 0.08),
+            transparent 38%
+        ),
+        var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+}
+body {
+    position: relative;
+    overflow-x: hidden;
+}
+
+body::before,
+body::after {
+    content: "";
+    position: fixed;
+    width: 480px;
+    height: 480px;
+    border-radius: 50%;
+    filter: blur(130px);
+    opacity: 0.18;
+    z-index: -1;
+    pointer-events: none;
+}
+
+body::before {
+    background: var(--red);
+    top: -120px;
+    left: -120px;
+    animation: floatBlob1 16s ease-in-out infinite;
+}
+
+body::after {
+    background: #3b82f6;
+    bottom: -150px;
+    right: -120px;
+    animation: floatBlob2 20s ease-in-out infinite;
+}
+
+@keyframes floatBlob1 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(100px, 70px) scale(1.25); }
+}
+
+@keyframes floatBlob2 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50%      { transform: translate(-90px, -50px) scale(1.15); }
+}
+
+
+/* =====================================================
+   Main Container
+   ===================================================== */
+
+.container {
+    width: min(1200px, calc(100% - 40px));
+
+    margin: 0 auto;
+
+    padding: 48px 0 60px;
+}
+
+
+/* =====================================================
+   Header
+   ===================================================== */
+
+.hero {
+    text-align: center;
+
+    margin-bottom: 34px;
+}
+
+.hero h1 {
+    font-size: 2.4rem;
+    line-height: 1.15;
+
+    font-weight: 700;
+
+    letter-spacing: -0.6px;
+}
+
+.hero p {
+    margin-top: 8px;
+
+    color: var(--muted);
+
+    font-size: 1rem;
+}
+
+
+/* =====================================================
+   Search Section
+   ===================================================== */
+
+.search-section {
+    width: min(800px, 100%);
+
+    margin: 0 auto;
+}
+
+.recommend-form {
+    display: grid;
+
+    grid-template-columns: 1fr 150px;
+
+    gap: 10px;
+
+    align-items: end;
+}
+
+.select-wrapper {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 7px;
+}
+
+.select-wrapper label {
+    color: #d1d5db;
+
+    font-size: 0.86rem;
+
+    font-weight: 500;
+}
+
+
+/* Select */
+select {
+    width: 100%;
+
+    height: 46px;
+
+    padding: 0 14px;
+
+    border-radius: 12px;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    background: rgba(255, 255, 255, 0.055);
+
+    color: #ffffff;
+
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    font-size: 0.9rem;
+
+    cursor: pointer;
+
+    transition:
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+select:hover,
+select:focus {
+    border-color: rgba(255, 255, 255, 0.18);
+
+    background: rgba(255, 255, 255, 0.075);
+}
+
+select option {
+    background: #171a21;
+    color: #ffffff;
+}
+
+
+/* Recommend Button */
+.recommend-button {
+    height: 46px;
+
+    border: none;
+
+    border-radius: 12px;
+
+    background: var(--red);
+
+    color: #ffffff;
+
+    font-size: 0.88rem;
+
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+.recommend-button:hover {
+    background: var(--red-hover);
+
+    transform: translateY(-1px);
+}
+
+.recommend-button:active {
+    transform: translateY(0);
+}
+
+
+/* =====================================================
+   Recommendation Section
+   ===================================================== */
+
+.recommendation-section {
+    margin-top: 42px;
+}
+
+.section-heading {
+    margin-bottom: 14px;
+}
+
+.section-heading h2 {
+    font-size: 1.2rem;
+
+    font-weight: 600;
+
+    letter-spacing: -0.2px;
+}
+
+
+/* =====================================================
+   Movie Grid
+   ===================================================== */
+
+.movies-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+
+    gap: 12px;
+}
+
+
+/* =====================================================
+   Movie Card
+   ===================================================== */
+
+.movie-card {
+    position: relative;
+    overflow: hidden;
+
+    background: linear-gradient(160deg, rgba(255,255,255,0.09), rgba(255,255,255,0.02));
+    backdrop-filter: blur(16px) saturate(150%);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.15),
+        0 8px 22px rgba(0,0,0,0.35);
+}
+
+.movie-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -150%;
+    width: 60%;
+    height: 100%;
+
+    background: linear-gradient(
+        120deg,
+        transparent,
+        rgba(255,255,255,0.22),
+        transparent
+    );
+    transform: skewX(-20deg);
+    z-index: 2;
+    pointer-events: none;
+
+    transition: left 0.65s ease;
+}
+
+.movie-card:hover::before {
+    left: 150%;
+}
+/* =====================================================
+   Poster
+   ===================================================== */
+
+.poster-wrapper {
+    width: 100%;
+
+    aspect-ratio: 2 / 3;
+
+    overflow: hidden;
+
+    border-radius: 8px;
+
+    background: #171a21;
+}
+
+.movie-poster {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    transition: transform 0.25s ease;
+}
+
+.movie-card:hover .movie-poster {
+    transform: scale(1.02);
+}
+
+
+/* =====================================================
+   Movie Info
+   ===================================================== */
+
+.movie-info {
+    padding: 8px 5px 5px;
+}
+
+.movie-title {
+    color: #ffffff;
+
+    font-size: 0.86rem;
+
+    font-weight: 600;
+
+    line-height: 1.25;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
+
+    margin-bottom: 4px;
+}
+
+.movie-meta {
+    color: #9ca3af;
+    font-size: 0.74rem;
+}
+
+.star {
+    color: #fbbf24;
+}
+
+.rating-label {
+    color: #6b7280;
+    margin-left: 3px;
+}
+
+/* =====================================================
+   Empty State
+   ===================================================== */
+
+.empty-state {
+    width: min(800px, 100%);
+
+    margin: 35px auto 0;
+
+    padding: 18px;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    background: var(--glass);
+
+    border: 1px solid var(--border);
+
+    border-radius: 12px;
+}
+
+
+/* =====================================================
+   Responsive
+   ===================================================== */
+
+@media (max-width: 900px) {
+
+    .movies-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .container {
+        width: min(100% - 24px, 520px);
+
+        padding-top: 32px;
+    }
+
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .recommend-form {
+        grid-template-columns: 1fr;
+    }
+
+    .recommend-button {
+        width: 100%;
+    }
+
+    .movies-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+
+        gap: 10px;
+    }
+
+}
+
+
+@media (max-width: 380px) {
+
+    .hero h1 {
+        font-size: 1.75rem;
+    }
+
+    .movies-grid {
+        gap: 8px;
+    }
+
+}
